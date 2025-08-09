@@ -1,14 +1,14 @@
 # GourangSharma-Trading-Bot
 
 This is a simple Python-based trading bot for Binance Futures Testnet.  
-It can place **Market** and **Limit** orders via the official Binance Futures API.
+It can place **Market** and **Limit**, and **Stop-Limit**  orders via the official Binance Futures API.
 
 ---
 
 ## Features
 - Place Market Orders (Buy/Sell)
 - Place Limit Orders (Buy/Sell)
-- Stop Limit Orders
+- Stop Limit Orders (trigger a limit when a stop price is hit)
 - Simple CLI Menu for easy interaction
 - Uses `.env` to store API credentials securely
 - Logs API requests, responses, and errors to `bot.log`
@@ -36,29 +36,45 @@ It can place **Market** and **Limit** orders via the official Binance Futures AP
 
 ## 2. Install Requirements
 Make sure Python 3.9+ is installed. Then run:
+```
 pip install -r requirements.txt
-
+```
 ---
 
 ## 3. How to Run the Bot
 
 Option 1 — Run Market Order Directly  
+```
 python src/market_orders.py BTCUSDT BUY 0.01  
 - `BTCUSDT` → trading pair  
 - `BUY` or `SELL` → order side  
 - `0.01` → quantity
+```
 
 Option 2 — Run Limit Order Directly  
+```
 python src/limit_orders.py BTCUSDT SELL 0.01 42000  
 - Last value is the **limit price**.
+```
 
-Option 3 — Use CLI Menu (Recommended for easy use)  
-python cli_menu.py  
+**Option 3 — Run Stop-Limit Order (Bonus)**  
+```
+python src/advanced/stop_limit.py BTCUSDT BUY 0.01 41500 41400
+```
+- `stop_price` is the trigger price (when reached, a limit order will be placed).  
+- `limit_price` is the price of the limit order placed after trigger.
+
+**Option 4 — Use CLI Menu (Recommended for easy use)**  
+```
+python cli_menu.py
+```
 This shows a simple menu:
+```
 === Binance Futures Bot Menu ===
 1. Place Market Order
 2. Place Limit Order
 3. Exit
+```
 Follow the prompts.
 
 ---
@@ -68,15 +84,21 @@ All bot activity and errors are stored in:
 bot.log
 
 For demonstration, a simulated log with successful orders is also provided:
+```
 bot_demo.log
+```
 
 ---
 
 ## 5. Notes
 - If API keys are invalid or Binance Testnet is down, you may see:
+  ```
   APIError(code=-2015): Invalid API-key, IP, or permissions for action
-  This is normal if the Testnet API is not accepting orders.
-- Once valid keys are available, the bot will place orders successfully.
+  ```
+  This happens when the Testnet API is not accepting orders.
+- The Stop-Limit script is in `src/advanced/stop_limit.py`. It places a stop/trigger and then a limit order when the stop price is hit.
+- OCO (One-Cancels-the-Other) for Futures is not natively supported by the API; it can be simulated by placing two orders and canceling the other when one fills.
+- Once valid keys are available, the bot will place orders successfully without major changes.
 
 ---
 
